@@ -1,11 +1,24 @@
-import { Form, Input, Button, Checkbox, Card } from 'antd'
+import { Form, Input, Button, Checkbox, Card, message } from 'antd'
 import './index.scss'
 import logo from '@/assets/logo.png'
 
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { login } from '@/store/actions'
+
 const Login = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   // 提交表单
-  const onFinish = (values) => {
-    console.log(values)
+  const onFinish = async (values) => {
+    const { mobile, code } = values
+    try {
+      await dispatch(login(mobile, code))
+      navigate('/home', { replace: true })
+    } catch (e) {
+      message.error(e.response?.data?.message || '登录失败')
+    }
   }
 
   return (
