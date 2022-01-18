@@ -4,8 +4,8 @@ import './App.scss'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 
 // 导入页面组件
-import Login from './pages/Login'
-import Layout from './pages/Layout'
+import Login from '@/pages/Login'
+import Layout from '@/pages/Layout'
 
 function App() {
   return (
