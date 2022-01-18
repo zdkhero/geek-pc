@@ -6,6 +6,10 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 // 导入页面组件
 import Login from '@/pages/Login'
 import Layout from '@/pages/Layout'
+import Home from '@/pages/Home'
+
+// 导入权限拦截组件
+import AuthRoute from '@/component/AuthRoute'
 
 function App() {
   return (
@@ -23,6 +27,15 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />} />
           <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/home"
+            element={
+              <AuthRoute>
+                <Home />
+              </AuthRoute>
+            }
+          />
         </Routes>
       </div>
     </BrowserRouter>
