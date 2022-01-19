@@ -13,6 +13,11 @@ export const user = (state = initialState, action) => {
         ...state,
         token: action.payload
       }
+    case 'user/setName':
+      return {
+        ...state,
+        name: action.payload
+      }
     default:
       return state
   }
