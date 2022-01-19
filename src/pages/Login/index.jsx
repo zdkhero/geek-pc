@@ -16,7 +16,7 @@ const Login = () => {
     const { mobile, code } = values
     try {
       await dispatch(login(mobile, code))
-      navigate('/home', { replace: true })
+      navigate('/', { replace: true })
     } catch (e) {
       message.error(e.response?.data?.message || '登录失败')
     }
@@ -75,9 +75,7 @@ const Login = () => {
                 }
               ]}
             >
-              <Checkbox className="login-checkbox-label">
-                我已阅读并同意「用户协议」和「隐私条款」
-              </Checkbox>
+              <Checkbox className="login-checkbox-label">我已阅读并同意「用户协议」和「隐私条款」</Checkbox>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" size="large" block>
