@@ -1,25 +1,28 @@
 import { Layout, Menu, Popconfirm, Button } from 'antd'
 import './index.scss'
 
-import {  Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 
 import { PieChartOutlined, SolutionOutlined, FileWordOutlined, LogoutOutlined } from '@ant-design/icons'
 
 const { Header, Sider, Content } = Layout
 
 const GeekLayout = () => {
+  const location = useLocation()
+  let defaultKey = location.pathname
+
   return (
     <Layout className="geek-layout">
       <Sider width={148}>
         <div className="logo">GEEK</div>
-        <Menu defaultSelectedKeys={['1']} mode="inline" theme="dark">
-          <Menu.Item icon={<PieChartOutlined />} key="1">
+        <Menu selectedKeys={[defaultKey]} defaultSelectedKeys={['/']} mode="inline" theme="dark">
+          <Menu.Item icon={<PieChartOutlined />} key="/">
             <Link to="/">数据面板</Link>
           </Menu.Item>
-          <Menu.Item icon={<SolutionOutlined />} key="2">
+          <Menu.Item icon={<SolutionOutlined />} key="/article">
             <Link to="/article">内容管理</Link>
           </Menu.Item>
-          <Menu.Item icon={<FileWordOutlined />} key="3">
+          <Menu.Item icon={<FileWordOutlined />} key="/publish">
             <Link to="/publish">发布文章</Link>
           </Menu.Item>
         </Menu>
