@@ -1,5 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
+import { logout } from '@/store/actions'
+import { message } from 'antd'
 
 const http = axios.create({
   baseURL: 'http://geek.itheima.net/v1_0',
@@ -26,7 +28,17 @@ http.interceptors.response.use(
   (res) => {
     return res?.data?.data || res
   },
-  (e) => Promise.reject(e)
+  (e) => {
+    if (e.response.status === 401) {
+      message.error(e.response.data?.message, 1.5, () => {
+        // 删除token
+        store.dispatch(logout())
+        // 跳转到登录页，并携带当前要访问的页面，这样，登录后可以继续返回该页面
+        window.location.pathname = '/login'
+      })
+    }
+    return Promise.reject(e)
+  }
 )
 
 export { http }
