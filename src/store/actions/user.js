@@ -18,11 +18,7 @@ export const login = (mobile, code) => {
 // 获取用户的基本信息
 export const getUserInfo = () => {
   return async (dispatch) => {
-    const data = await http.get('/user/profile', {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    })
+    const data = await http.get('/user/profile')
     dispatch({ type: 'user/setName', payload: data.name })
   }
 }
