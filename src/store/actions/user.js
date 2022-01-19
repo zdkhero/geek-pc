@@ -1,4 +1,4 @@
-import { getToken, setToken, http } from '@/utils'
+import { getToken, setToken, clearToken, http } from '@/utils'
 
 // 登录
 export const login = (mobile, code) => {
@@ -10,10 +10,8 @@ export const login = (mobile, code) => {
 
     // 注意：此处获取的是 token
     const { token } = res
-
-    // localStorage.setItem('geek-pc-token', token)
     setToken(token)
-    dispatch({ type: 'login/setToken', payload: token })
+    dispatch({ type: 'user/setToken', payload: token })
   }
 }
 
@@ -26,5 +24,17 @@ export const getUserInfo = () => {
       }
     })
     dispatch({ type: 'user/setName', payload: data.name })
+  }
+}
+
+// 退出功能
+export const logout = () => {
+  return (dispatch) => {
+    // 清除 Token()
+    clearToken()
+    // 清除 token
+    dispatch({ type: 'user/setToken', payload: '' })
+    // 清除用户信息
+    dispatch({ type: 'user/setName', payload: '' })
   }
 }
