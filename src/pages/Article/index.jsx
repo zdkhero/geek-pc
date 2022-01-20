@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getChannels, getArticles, deleteArticle } from '@/store/actions'
+import { getArticles, deleteArticle } from '@/store/actions'
 
 import {
   Form,
@@ -19,6 +19,8 @@ import {
 } from 'antd'
 import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Link, useNavigate } from 'react-router-dom'
+
+import Channel from '@/component/Channel'
 
 import styles from './index.module.scss'
 
@@ -40,7 +42,7 @@ const Article = () => {
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { channels, results, page, per_page, total_count } = useSelector((state) => state.article)
+  const { results, page, per_page, total_count } = useSelector((state) => state.article)
 
   // 阅读状态数据（不同状态文字和颜色不一样）
   const statusLabel = [
@@ -126,9 +128,6 @@ const Article = () => {
   }
 
   useEffect(() => {
-    // 获取频道数据
-    dispatch(getChannels())
-
     // 获取文章列表数据
     dispatch(getArticles(params.current))
   }, [dispatch])
@@ -184,13 +183,7 @@ const Article = () => {
             </Radio.Group>
           </Form.Item>
           <Form.Item label="频道：" name="channel_id">
-            <Select style={{ width: 288 }} placeholder="请选择所属频道">
-              {channels.map((item) => (
-                <Select.Option key={item.id} value={item.id}>
-                  {item.name}
-                </Select.Option>
-              ))}
-            </Select>
+            <Channel width={288}></Channel>
           </Form.Item>
           <Form.Item label="日期：" name="dateArr">
             <DatePicker.RangePicker />
