@@ -15,3 +15,10 @@ export const getArticles = (params) => {
     dispatch({ type: 'article/setArticles', payload: data })
   }
 }
+
+// 删除文章功能
+export const deleteArticle = (id) => {
+  return async (dispatch) => {
+    await http.delete('mp/articles/' + id)
+  }
+}

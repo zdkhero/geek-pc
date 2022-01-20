@@ -1,15 +1,31 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getChannels, getArticles } from '@/store/actions'
+import { getChannels, getArticles, deleteArticle } from '@/store/actions'
 
-import { Form, Button, Card, Breadcrumb, Radio, Select, DatePicker, Table, Space, Image, Tag } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import {
+  Form,
+  Button,
+  Card,
+  Breadcrumb,
+  Radio,
+  Select,
+  DatePicker,
+  Table,
+  Space,
+  Image,
+  Tag,
+  Modal,
+  message
+} from 'antd'
+import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 
 import styles from './index.module.scss'
 
 // 默认展示的图片
 import defaultImg from '@/assets/error.png'
+
+const { confirm } = Modal
 
 const Article = () => {
   // 请求参数
@@ -79,14 +95,29 @@ const Article = () => {
     {
       title: '操作',
       key: 'action',
-      render: () => (
+      render: (text, record) => (
         <Space size="middle">
           <Button type="link" icon={<EditOutlined />} />
-          <Button type="link" icon={<DeleteOutlined />} />
+          <Button type="link" icon={<DeleteOutlined />} onClick={() => delArticle(record.id)} />
         </Space>
       )
     }
   ]
+
+  // 实现删除功能
+  const delArticle = (id) => {
+    confirm({
+      title: '温馨提示',
+      icon: <ExclamationCircleOutlined />,
+      content: '此操作将永久删除该文章, 是否继续?',
+      onOk: async () => {
+        // 执行删除操作
+        await dispatch(deleteArticle(id))
+        await dispatch(getArticles(params.current))
+        message.success('删除成功')
+      }
+    })
+  }
 
   useEffect(() => {
     // 获取频道数据
