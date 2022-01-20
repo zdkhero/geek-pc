@@ -13,7 +13,7 @@ import defaultImg from '@/assets/error.png'
 
 const Article = () => {
   const dispatch = useDispatch()
-  const { channels, results } = useSelector((state) => state.article)
+  const { channels, results, page, per_page, total_count } = useSelector((state) => state.article)
 
   // 阅读状态数据（不同状态文字和颜色不一样）
   const statusLabel = [
@@ -106,6 +106,14 @@ const Article = () => {
     dispatch(getArticles(params))
   }
 
+  // 改变分页和size重新查询
+  const onPageChange = (page, pageSize) => {
+    const params = {}
+    params.page = page
+    params.per_page = pageSize
+    dispatch(getArticles(params))
+  }
+
   return (
     <div className={styles.root}>
       <Card
@@ -151,7 +159,17 @@ const Article = () => {
       </Card>
 
       <Card title={`根据筛选条件共查询到 100 条结果：`} style={{ marginTop: 24 }}>
-        <Table columns={columns} dataSource={results} rowKey="id"></Table>
+        <Table
+          columns={columns}
+          dataSource={results}
+          rowKey="id"
+          pagination={{
+            current: page,
+            pageSize: per_page,
+            total: total_count,
+            onChange: onPageChange
+          }}
+        ></Table>
       </Card>
     </div>
   )
