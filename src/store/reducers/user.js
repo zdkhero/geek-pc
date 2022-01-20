@@ -7,7 +7,6 @@ const initialState = {
 }
 
 const user = (state = initialState, action) => {
-  console.log(action)
   switch (action.type) {
     case 'user/setToken':
       return {

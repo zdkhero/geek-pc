@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom'
 import styles from './index.module.scss'
 import Channel from '@/component/Channel'
 
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+
 const Publish = () => {
   const [fileList, setFileList] = useState([])
   const [maxCount, setMaxCount] = useState(1)
@@ -56,7 +59,7 @@ const Publish = () => {
           </Breadcrumb>
         }
       >
-        <Form labelCol={{ span: 4 }} initialValues={{ type: 1 }}>
+        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} initialValues={{ type: 1, content: '' }}>
           <Form.Item label="文章标题：" name="title">
             <Input placeholder="请输入文章标题" style={{ width: 400 }} />
           </Form.Item>
@@ -93,6 +96,9 @@ const Publish = () => {
                 </div>
               </Upload>
             )}
+          </Form.Item>
+          <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入文章内容' }]}>
+            <ReactQuill className="publish-quill" theme="snow" placeholder="请输入文章内容" />
           </Form.Item>
         </Form>
       </Card>
