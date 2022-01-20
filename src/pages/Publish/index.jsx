@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Card, Breadcrumb, Form, Button, Input, Space, Upload, Radio } from 'antd'
+import { Card, Breadcrumb, Form, Button, Input, Space, Upload, Radio, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import styles from './index.module.scss'
@@ -44,6 +44,14 @@ const Publish = () => {
     }
   }
 
+  // 提交表单
+  const onFinish = async (values) => {
+    if (maxCount !== fileList.length) {
+      return message.warning('请按照选择的封面类型上传图片')
+    }
+    console.log('ok')
+  }
+
   return (
     <div className={styles.root}>
       <Card
@@ -59,18 +67,20 @@ const Publish = () => {
           </Breadcrumb>
         }
       >
-        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} initialValues={{ type: 1, content: '' }}>
-          <Form.Item label="文章标题：" name="title">
+        <Form
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ type: 1, content: '' }}
+          onFinish={onFinish}
+        >
+          <Form.Item label="文章标题：" name="title" rules={[{ required: true, message: '请输入文章标题' }]}>
             <Input placeholder="请输入文章标题" style={{ width: 400 }} />
           </Form.Item>
-          <Form.Item label="所属频道：" name="channel_id">
+
+          <Form.Item label="所属频道：" name="channel_id" rules={[{ required: true, message: '请选择所属频道' }]}>
             <Channel></Channel>
           </Form.Item>
-          <Form.Item wrapperCol={{ offset: 4 }}>
-            <Space>
-              <Button type="primary">发表文章</Button>
-            </Space>
-          </Form.Item>
+
           <Form.Item label="封面">
             <Form.Item name="type">
               <Radio.Group onChange={changeType}>
@@ -97,8 +107,18 @@ const Publish = () => {
               </Upload>
             )}
           </Form.Item>
+
           <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入文章内容' }]}>
             <ReactQuill className="publish-quill" theme="snow" placeholder="请输入文章内容" />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 4 }}>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                发表文章
+              </Button>
+              <Button>存入草稿</Button>
+            </Space>
           </Form.Item>
         </Form>
       </Card>
