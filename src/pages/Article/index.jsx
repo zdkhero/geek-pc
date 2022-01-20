@@ -86,6 +86,26 @@ const Article = () => {
     dispatch(getArticles({}))
   }, [dispatch])
 
+  // 筛选功能
+  const onFinish = (values) => {
+    // 定义查询参数
+    const params = {}
+    params.status = values.status
+    params.channel_id = values.channel_id
+
+    // 对时间进行格式化
+    if (values.dateArr) {
+      params.begin_pubdate = values.dateArr[0].format('YYYY-MM-DD HH:mm:ss')
+      params.end_pubdate = values.dateArr[1].format('YYYY-MM-DD HH:mm:ss')
+    } else {
+      params.begin_pubdate = undefined
+      params.end_pubdate = undefined
+    }
+
+    // 分发 action
+    dispatch(getArticles(params))
+  }
+
   return (
     <div className={styles.root}>
       <Card
@@ -100,7 +120,7 @@ const Article = () => {
         }
       >
         {/* 表单 */}
-        <Form>
+        <Form onFinish={onFinish}>
           <Form.Item label="状态：" name="status">
             <Radio.Group>
               <Radio value={undefined}>全部</Radio>
@@ -123,7 +143,9 @@ const Article = () => {
             <DatePicker.RangePicker />
           </Form.Item>
           <Form.Item>
-            <Button type="primary">筛选</Button>
+            <Button type="primary" htmlType="submit">
+              筛选
+            </Button>
           </Form.Item>
         </Form>
       </Card>
