@@ -1,20 +1,36 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getChannels } from '@/store/actions'
+import { getChannels, getArticles } from '@/store/actions'
 
-import { Form, Button, Card, Breadcrumb, Radio, Select, DatePicker, Table, Space } from 'antd'
+import { Form, Button, Card, Breadcrumb, Radio, Select, DatePicker, Table, Space, Image, Tag } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 
 import styles from './index.module.scss'
 
+// 默认展示的图片
+import defaultImg from '@/assets/error.png'
+
 const Article = () => {
+  const dispatch = useDispatch()
+  const { channels, results } = useSelector((state) => state.article)
+
+  // 阅读状态数据（不同状态文字和颜色不一样）
+  const statusLabel = [
+    { text: '草稿', color: 'default' },
+    { text: '待审核', color: 'blue' },
+    { text: '审核通过', color: 'green' },
+    { text: '审核拒绝', color: 'red' }
+  ]
+
   const columns = [
     {
       title: '封面',
       dataIndex: 'cover',
       key: 'cover',
-      render: () => '自定义封面'
+      render: (cover) => (
+        <Image src={cover?.images?.[0] || defaultImg} style={{ objectFit: 'cover' }} width={200} height={120} />
+      )
     },
     {
       title: '标题',
@@ -25,7 +41,10 @@ const Article = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: () => '自定义状态'
+      render: (status) => {
+        const info = statusLabel[status]
+        return <Tag color={info.color}>{info.text}</Tag>
+      }
     },
     {
       title: '发布时间',
@@ -59,11 +78,12 @@ const Article = () => {
     }
   ]
 
-  const dispatch = useDispatch()
-  const { channels } = useSelector((state) => state.article)
-
   useEffect(() => {
+    // 获取频道数据
     dispatch(getChannels())
+
+    // 获取文章列表数据
+    dispatch(getArticles({}))
   }, [dispatch])
 
   return (
@@ -109,7 +129,7 @@ const Article = () => {
       </Card>
 
       <Card title={`根据筛选条件共查询到 100 条结果：`} style={{ marginTop: 24 }}>
-        <Table columns={columns} dataSource={[]}></Table>
+        <Table columns={columns} dataSource={results} rowKey="id"></Table>
       </Card>
     </div>
   )
