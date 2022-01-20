@@ -1,9 +1,46 @@
-import { Card, Breadcrumb, Form, Button, Input, Space } from 'antd'
+import { useState, useRef } from 'react'
+import { Card, Breadcrumb, Form, Button, Input, Space, Upload, Radio } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import styles from './index.module.scss'
 import Channel from '@/component/Channel'
 
 const Publish = () => {
+  const [fileList, setFileList] = useState([])
+  const [maxCount, setMaxCount] = useState(1)
+  const fileListRef = useRef([])
+
+  const onUploadChange = (info) => {
+    // info.fileList 用来获取当前的文件列表
+    const fileList = info.fileList.map((file) => {
+      // 刚从本地上传的图片
+      if (file.response) {
+        return {
+          url: file.response.data.url
+        }
+      }
+      // 已有图片
+      return file
+    })
+    setFileList(fileList)
+    fileListRef.current = fileList
+  }
+
+  // 获取图片的数量
+  const changeType = (e) => {
+    const count = e.target.value
+    setMaxCount(count)
+
+    if (count === 1) {
+      // 单图，只展示第一张
+      const firstImg = fileListRef.current[0]
+      setFileList(firstImg === undefined ? [] : [firstImg])
+    } else if (count === 3) {
+      // 三图，展示所有图片
+      setFileList(fileListRef.current)
+    }
+  }
+
   return (
     <div className={styles.root}>
       <Card
@@ -19,7 +56,7 @@ const Publish = () => {
           </Breadcrumb>
         }
       >
-        <Form labelCol={{ span: 4 }}>
+        <Form labelCol={{ span: 4 }} initialValues={{ type: 1 }}>
           <Form.Item label="文章标题：" name="title">
             <Input placeholder="请输入文章标题" style={{ width: 400 }} />
           </Form.Item>
@@ -30,6 +67,32 @@ const Publish = () => {
             <Space>
               <Button type="primary">发表文章</Button>
             </Space>
+          </Form.Item>
+          <Form.Item label="封面">
+            <Form.Item name="type">
+              <Radio.Group onChange={changeType}>
+                <Radio value={1}>单图</Radio>
+                <Radio value={3}>三图</Radio>
+                <Radio value={0}>无图</Radio>
+              </Radio.Group>
+            </Form.Item>
+
+            {maxCount > 0 && (
+              <Upload
+                name="image"
+                listType="picture-card"
+                className="avatar-uploader"
+                showUploadList
+                action="http://geek.itheima.net/v1_0/upload"
+                multiple
+                fileList={fileList}
+                onChange={onUploadChange}
+              >
+                <div style={{ marginTop: 8 }}>
+                  <PlusOutlined />
+                </div>
+              </Upload>
+            )}
           </Form.Item>
         </Form>
       </Card>
