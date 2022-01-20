@@ -18,7 +18,7 @@ import {
   message
 } from 'antd'
 import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './index.module.scss'
 
@@ -38,6 +38,7 @@ const Article = () => {
     end_pubdate: undefined
   })
 
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { channels, results, page, per_page, total_count } = useSelector((state) => state.article)
 
@@ -97,12 +98,17 @@ const Article = () => {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" icon={<EditOutlined />} />
+          <Button type="link" icon={<EditOutlined />} onClick={() => editArticleFn(record.id)} />
           <Button type="link" icon={<DeleteOutlined />} onClick={() => delArticle(record.id)} />
         </Space>
       )
     }
   ]
+
+  // 跳转到编辑页面
+  const editArticleFn = (id) => {
+    navigate(`/publish/${id}`)
+  }
 
   // 实现删除功能
   const delArticle = (id) => {
