@@ -6,7 +6,7 @@ const initialState = {
   token: getToken()
 }
 
-export const user = (state = initialState, action) => {
+const user = (state = initialState, action) => {
   console.log(action)
   switch (action.type) {
     case 'user/setToken':
@@ -23,3 +23,5 @@ export const user = (state = initialState, action) => {
       return state
   }
 }
+
+export default user

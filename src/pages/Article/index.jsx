@@ -1,3 +1,7 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getChannels } from '@/store/actions'
+
 import { Form, Button, Card, Breadcrumb, Radio, Select, DatePicker, Table, Space } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
@@ -55,6 +59,13 @@ const Article = () => {
     }
   ]
 
+  const dispatch = useDispatch()
+  const { channels } = useSelector((state) => state.article)
+
+  useEffect(() => {
+    dispatch(getChannels())
+  }, [dispatch])
+
   return (
     <div className={styles.root}>
       <Card
@@ -81,8 +92,11 @@ const Article = () => {
           </Form.Item>
           <Form.Item label="频道：" name="channel_id">
             <Select style={{ width: 288 }} placeholder="请选择所属频道">
-              <Select.Option value={1}>Java</Select.Option>
-              <Select.Option value={2}>前端</Select.Option>
+              {channels.map((item) => (
+                <Select.Option key={item.id} value={item.id}>
+                  {item.name}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item label="日期：" name="dateArr">
