@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getChannels, getArticles } from '@/store/actions'
 
@@ -12,6 +12,16 @@ import styles from './index.module.scss'
 import defaultImg from '@/assets/error.png'
 
 const Article = () => {
+  // 请求参数
+  const params = useRef({
+    page: 1,
+    per_page: 20,
+    channel_id: undefined,
+    status: undefined,
+    begin_pubdate: undefined,
+    end_pubdate: undefined
+  })
+
   const dispatch = useDispatch()
   const { channels, results, page, per_page, total_count } = useSelector((state) => state.article)
 
@@ -83,35 +93,33 @@ const Article = () => {
     dispatch(getChannels())
 
     // 获取文章列表数据
-    dispatch(getArticles({}))
+    dispatch(getArticles(params.current))
   }, [dispatch])
 
   // 筛选功能
   const onFinish = (values) => {
-    // 定义查询参数
-    const params = {}
-    params.status = values.status
-    params.channel_id = values.channel_id
+    params.current.status = values.status
+    params.current.channel_id = values.channel_id
 
     // 对时间进行格式化
     if (values.dateArr) {
-      params.begin_pubdate = values.dateArr[0].format('YYYY-MM-DD HH:mm:ss')
-      params.end_pubdate = values.dateArr[1].format('YYYY-MM-DD HH:mm:ss')
+      params.current.begin_pubdate = values.dateArr[0].format('YYYY-MM-DD HH:mm:ss')
+      params.current.end_pubdate = values.dateArr[1].format('YYYY-MM-DD HH:mm:ss')
     } else {
-      params.begin_pubdate = undefined
-      params.end_pubdate = undefined
+      params.current.begin_pubdate = undefined
+      params.current.end_pubdate = undefined
     }
 
     // 分发 action
-    dispatch(getArticles(params))
+    params.current.page = 1
+    dispatch(getArticles(params.current))
   }
 
   // 改变分页和size重新查询
   const onPageChange = (page, pageSize) => {
-    const params = {}
-    params.page = page
-    params.per_page = pageSize
-    dispatch(getArticles(params))
+    params.current.page = page
+    params.current.per_page = pageSize
+    dispatch(getArticles(params.current))
   }
 
   return (
@@ -158,7 +166,7 @@ const Article = () => {
         </Form>
       </Card>
 
-      <Card title={`根据筛选条件共查询到 100 条结果：`} style={{ marginTop: 24 }}>
+      <Card title={`根据筛选条件共查询到 ${total_count} 条结果：`} style={{ marginTop: 24 }}>
         <Table
           columns={columns}
           dataSource={results}
