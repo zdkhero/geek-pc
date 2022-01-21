@@ -1,5 +1,6 @@
 const path = require('path')
 const { whenProd, getPlugin, pluginByName } = require('@craco/craco')
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin')
 
 module.exports = {
   // 修改 webpack 配置
@@ -34,5 +35,9 @@ module.exports = {
     })
 
     return webpackConfig
+  },
+
+  plugins: {
+    add: [new AntdDayjsWebpackPlugin()]
   }
 }
