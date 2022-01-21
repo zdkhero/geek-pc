@@ -18,6 +18,10 @@ const Publish = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  // 创建表单实例
+  // 注意：此处的 form 是从数组中解构出来的
+  const [form] = Form.useForm()
+
   const onUploadChange = (info) => {
     // info.fileList 用来获取当前的文件列表
     const fileList = info.fileList.map((file) => {
@@ -49,8 +53,8 @@ const Publish = () => {
     }
   }
 
-  // 提交表单
-  const onFinish = async (values) => {
+  // 文章发布或存为草稿
+  const saveArticles = async (values, saveType) => {
     if (maxCount !== fileList.length) {
       return message.warning('请按照选择的封面类型上传图片')
     }
@@ -66,11 +70,24 @@ const Publish = () => {
       }
     }
 
-    await dispatch(updateArticle(data))
+    await dispatch(updateArticle(data, saveType === 'add'))
 
-    message.success('发布成功', 1, () => {
+    const showMsg = saveType === 'add' ? '发布成功' : '存入草稿成功'
+
+    message.success(showMsg, 1, () => {
       navigate('/article')
     })
+  }
+
+  // 发布文章
+  const onFinish = async (values) => {
+    saveArticles(values, 'add')
+  }
+
+  // 存为草稿
+  const saveDraft = async () => {
+    const values = await form.validateFields()
+    saveArticles(values, 'draft')
   }
 
   return (
@@ -92,6 +109,7 @@ const Publish = () => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1, content: '' }}
+          form={form}
           onFinish={onFinish}
         >
           <Form.Item label="文章标题：" name="title" rules={[{ required: true, message: '请输入文章标题' }]}>
@@ -138,7 +156,7 @@ const Publish = () => {
               <Button type="primary" htmlType="submit">
                 发表文章
               </Button>
-              <Button>存入草稿</Button>
+              <Button onClick={saveDraft}>存入草稿</Button>
             </Space>
           </Form.Item>
         </Form>

@@ -24,8 +24,8 @@ export const deleteArticle = (id) => {
 }
 
 // 发布文章功能
-export const updateArticle = (data) => {
+export const updateArticle = (data, draft) => {
   return async () => {
-    await http.post('/mp/articles?draft=false', data)
+    await http.post(`/mp/articles?draft=${draft ? 'false' : 'true'}`, data)
   }
 }
