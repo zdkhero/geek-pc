@@ -22,3 +22,10 @@ export const deleteArticle = (id) => {
     await http.delete('mp/articles/' + id)
   }
 }
+
+// 发布文章功能
+export const updateArticle = (data) => {
+  return async () => {
+    await http.post('/mp/articles?draft=false', data)
+  }
+}

@@ -1,7 +1,10 @@
 import { useState, useRef } from 'react'
 import { Card, Breadcrumb, Form, Button, Input, Space, Upload, Radio, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { updateArticle } from '@/store/actions'
+
 import styles from './index.module.scss'
 import Channel from '@/component/Channel'
 
@@ -12,6 +15,8 @@ const Publish = () => {
   const [fileList, setFileList] = useState([])
   const [maxCount, setMaxCount] = useState(1)
   const fileListRef = useRef([])
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const onUploadChange = (info) => {
     // info.fileList 用来获取当前的文件列表
@@ -49,7 +54,23 @@ const Publish = () => {
     if (maxCount !== fileList.length) {
       return message.warning('请按照选择的封面类型上传图片')
     }
-    console.log('ok')
+
+    const { type, ...rest } = values
+
+    const data = {
+      ...rest,
+      // 注意：接口会按照上传图片的数量决定单图或三图
+      cover: {
+        type,
+        images: fileList.map((item) => item.url)
+      }
+    }
+
+    await dispatch(updateArticle(data))
+
+    message.success('发布成功', 1, () => {
+      navigate('/article')
+    })
   }
 
   return (
