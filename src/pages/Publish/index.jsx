@@ -100,19 +100,24 @@ const Publish = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      if (!isEdit) return
-      // 获取文章信息
-      const res = await dispatch(getArticleById(params.id))
-      console.log(res)
-      const { images, ...formValue } = res
-      // 动态设置表单数据
-      form.setFieldsValue(formValue)
+      if (params.id) {
+        // 获取文章信息
+        const res = await dispatch(getArticleById(params.id))
+        console.log(res)
+        const { images, ...formValue } = res
+        // 动态设置表单数据
+        form.setFieldsValue(formValue)
 
-      // 格式化封面图片数据
-      const imageList = images.map((item) => ({ url: item }))
-      setFileList(imageList)
-      setMaxCount(formValue.type)
-      fileListRef.current = imageList
+        // 格式化封面图片数据
+        const imageList = images.map((item) => ({ url: item }))
+        setFileList(imageList)
+        setMaxCount(formValue.type)
+        fileListRef.current = imageList
+      } else {
+        form.resetFields()
+        setMaxCount(1)
+        setFileList([])
+      }
     }
     loadData()
   }, [form, params.id, dispatch, isEdit])

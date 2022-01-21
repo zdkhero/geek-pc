@@ -16,6 +16,9 @@ const GeekLayout = () => {
   const navigate = useNavigate()
 
   let defaultKey = location.pathname
+  if (defaultKey.startsWith('/publish')) {
+    defaultKey = '/publish'
+  }
 
   // 获取用户信息
   useEffect(() => {
@@ -34,7 +37,7 @@ const GeekLayout = () => {
     <Layout className="geek-layout">
       <Sider width={148}>
         <div className="logo">GEEK</div>
-        <Menu selectedKeys={[defaultKey]} defaultSelectedKeys={['/']} mode="inline" theme="dark">
+        <Menu selectedKeys={[defaultKey]} mode="inline" theme="dark">
           <Menu.Item icon={<PieChartOutlined />} key="/">
             <Link to="/">数据面板</Link>
           </Menu.Item>
