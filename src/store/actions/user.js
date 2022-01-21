@@ -1,4 +1,4 @@
-import { getToken, setToken, clearToken, http } from '@/utils'
+import { setToken, clearToken, http } from '@/utils'
 
 // 登录
 export const login = (mobile, code) => {
