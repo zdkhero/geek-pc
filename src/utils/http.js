@@ -4,7 +4,8 @@ import { logout } from '@/store/actions'
 import { message } from 'antd'
 
 const http = axios.create({
-  baseURL: 'http://geek.itheima.net/v1_0',
+  // baseURL: 'http://geek.itheima.net/v1_0',
+  baseURL: process.env.REACT_APP_URL,
   timeout: 5000
 })
 
