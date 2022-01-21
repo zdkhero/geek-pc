@@ -24,7 +24,9 @@ function App() {
           {/* index 默认子路由 */}
           <Route index element={<AuthRoute><Dashboard /></AuthRoute>} />
           <Route path="article" element={<AuthRoute><Article /></AuthRoute>} />
-          <Route path="publish/*" element={<AuthRoute><Publish /></AuthRoute>}/>
+          <Route path="publish" element={<AuthRoute><Publish /></AuthRoute>} >
+            <Route path=":id" element={<AuthRoute><Publish /></AuthRoute>} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/login" element={<Login />} />

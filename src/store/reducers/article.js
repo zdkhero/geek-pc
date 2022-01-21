@@ -20,6 +20,11 @@ const article = (state = initialState, action) => {
         ...state,
         ...action.payload
       }
+    case 'article/getArticleById':
+      return {
+        ...state,
+        article: action.payload
+      }
     default:
       return state
   }

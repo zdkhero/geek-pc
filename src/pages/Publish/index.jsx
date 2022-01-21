@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Card, Breadcrumb, Form, Button, Input, Space, Upload, Radio, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { updateArticle } from '@/store/actions'
+import { updateArticle, getArticleById } from '@/store/actions'
 
 import styles from './index.module.scss'
 import Channel from '@/component/Channel'
@@ -17,6 +17,10 @@ const Publish = () => {
   const fileListRef = useRef([])
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  const params = useParams()
+  // 判断是否是编辑
+  const isEdit = params.id !== undefined
 
   // 创建表单实例
   // 注意：此处的 form 是从数组中解构出来的
@@ -70,7 +74,11 @@ const Publish = () => {
       }
     }
 
-    await dispatch(updateArticle(data, saveType === 'add'))
+    if (isEdit) {
+      data.id = params.id
+    }
+
+    await dispatch(updateArticle(data, saveType === 'add', isEdit))
 
     const showMsg = saveType === 'add' ? '发布成功' : '存入草稿成功'
 
@@ -90,6 +98,25 @@ const Publish = () => {
     saveArticles(values, 'draft')
   }
 
+  useEffect(() => {
+    const loadData = async () => {
+      if (!isEdit) return
+      // 获取文章信息
+      const res = await dispatch(getArticleById(params.id))
+      console.log(res)
+      const { images, ...formValue } = res
+      // 动态设置表单数据
+      form.setFieldsValue(formValue)
+
+      // 格式化封面图片数据
+      const imageList = images.map((item) => ({ url: item }))
+      setFileList(imageList)
+      setMaxCount(formValue.type)
+      fileListRef.current = imageList
+    }
+    loadData()
+  }, [form, params.id, dispatch, isEdit])
+
   return (
     <div className={styles.root}>
       <Card
@@ -101,7 +128,7 @@ const Publish = () => {
             <Breadcrumb.Item>
               <Link to="/article">内容管理</Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>发布文章</Breadcrumb.Item>
+            <Breadcrumb.Item>{isEdit ? '修改文章' : '发布文章'}</Breadcrumb.Item>
           </Breadcrumb>
         }
       >
@@ -154,7 +181,7 @@ const Publish = () => {
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
               <Button type="primary" htmlType="submit">
-                发表文章
+                {isEdit ? '修改文章' : '发布文章'}
               </Button>
               <Button onClick={saveDraft}>存入草稿</Button>
             </Space>
